@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    canvas {
+      border: 5px solid black;
+      border-radius: 1%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-top: -240px;
+      margin-left: -320px;
+    }
+  </style>
+  <title>Grid POC</title>
+</head>
+<body>
+  <canvas id="gridCanvas" width="640px" height="480px"></canvas>
+</body>
+<script>
+  const canvas = document.querySelector("#gridCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let cursorPos = {
+    x: 0,
+    y: 0,
+  }
+
+  canvas.addEventListener('mousemove', function(e) {
+    const relativeX = e.clientX - canvas.offsetLeft;
+    const relativeY = e.clientY - canvas.offsetTop;
+  
+    if(relativeX > 0 && relativeX < canvas.width && relativeY > 0 && relativeY < canvas.height) {
+        cursorPos = {
+          x: relativeX,
+          y: relativeY,
+        }
+    }
+  });
+
+  canvas.addEventListener('mouseout', function() {
+    cursorPos = {
+      x: 0,
+      y: 0,
+    }
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (cursorPos.x > 0 && cursorPos.x < 40 && cursorPos.y > 0 && cursorPos.y < 40) {
+      ctx.fillStyle = "blue";
+      ctx.fillRect(0, 0, 40, 40)
+    }
+
+    for (let x = 0; x < canvas.width; x += 40) {
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.rect(x, y, 40, 40);
+        ctx.stroke();
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</html>
