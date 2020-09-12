@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=0.5">
   <style>
     canvas {
       border: 5px solid black;
@@ -20,15 +20,19 @@
   <canvas id="gridCanvas" width="640px" height="480px"></canvas>
 </body>
 <script>
+  const gridSize = 80;
   const canvas = document.querySelector("#gridCanvas");
   const ctx = canvas.getContext("2d");
 
   let cursorPos = {
     x: 0,
     y: 0,
-  }
+  };
+  let mouseIn = false;
 
   canvas.addEventListener('mousemove', function(e) {
+    mouseIn = true;
+
     const relativeX = e.clientX - canvas.offsetLeft;
     const relativeY = e.clientY - canvas.offsetTop;
   
@@ -41,25 +45,38 @@
   });
 
   canvas.addEventListener('mouseout', function() {
-    cursorPos = {
-      x: 0,
-      y: 0,
-    }
+    mouseIn = false;
   });
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (cursorPos.x > 0 && cursorPos.x < 40 && cursorPos.y > 0 && cursorPos.y < 40) {
-      ctx.fillStyle = "blue";
-      ctx.fillRect(0, 0, 40, 40)
-    }
-
-    for (let x = 0; x < canvas.width; x += 40) {
-      for (let y = 0; y < canvas.height; y += 40) {
-        ctx.rect(x, y, 40, 40);
+    for (let x = 0; x < canvas.width; x += gridSize) {
+      for (let y = 0; y < canvas.height; y += gridSize) {
+        if (mouseIn && cursorPos.x > x && cursorPos.x < x + gridSize && cursorPos.y > y && cursorPos.y < y + gridSize) {
+          ctx.fillStyle = "blue";
+          ctx.fillRect(x, y, gridSize, gridSize)
+        }
+        
+        ctx.rect(x, y, gridSize, gridSize);
         ctx.stroke();
       }
+    }
+    
+    if (mouseIn) {
+      ctx.beginPath();
+      ctx.moveTo(cursorPos.x, 0);
+      ctx.lineTo(cursorPos.x, canvas.height);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(0, cursorPos.y);
+      ctx.lineTo(canvas.width, cursorPos.y);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.arc(cursorPos.x, cursorPos.y, 40, 0, 2 * Math.PI);
+      ctx.stroke();
     }
 
     requestAnimationFrame(draw);
