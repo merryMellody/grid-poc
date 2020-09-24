@@ -3,126 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=0.5" />
-    <style>
-      #gridCanvas {
-        border: 5px solid black;
-        border-radius: 1%;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        margin-top: -240px;
-        margin-left: -320px;
-        z-index: 10;
-      }
-
-      #indicatorCanvas {
-        border: 5px solid black;
-        border-radius: 1%;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        margin-top: -240px;
-        margin-left: -320px;
-        z-index: 0;
-      }
-    </style>
+    <link rel="stylesheet" href="app.css">
     <title>Grid POC</title>
   </head>
   <body>
+    <canvas id="backgroundCanvas" width="640px" height="480px"></canvas>
     <canvas id="gridCanvas" width="640px" height="480px"></canvas>
     <canvas id="indicatorCanvas" width="640px" height="480px"></canvas>
   </body>
-  <script>
-    const gridSize = 40;
-    const canvas = document.querySelector("#gridCanvas");
-    const indicatorCanvas = document.querySelector("#indicatorCanvas");
-    const ctx = canvas.getContext("2d");
-    const indicatorCtx = indicatorCanvas.getContext("2d");
-
-    let cursorPos = {
-      x: 0,
-      y: 0,
-    };
-    let mouseIn = false;
-    let mouseDown = false;
-
-    canvas.addEventListener("mousemove", function (e) {
-      mouseIn = true;
-
-      const relativeX = e.clientX - canvas.offsetLeft - 5;
-      const relativeY = e.clientY - canvas.offsetTop - 5;
-
-      if (
-        relativeX > 0 &&
-        relativeX < canvas.width &&
-        relativeY > 0 &&
-        relativeY < canvas.height
-      ) {
-        cursorPos = {
-          x: relativeX,
-          y: relativeY,
-        };
-      }
-      requestAnimationFrame(draw);
-    });
-
-    canvas.addEventListener("mouseout", function () {
-      mouseIn = false;
-      requestAnimationFrame(draw);
-    });
-
-    canvas.addEventListener("mousedown", function () {
-      mouseDown = true;
-      requestAnimationFrame(draw);
-    });
-
-    canvas.addEventListener("mouseup", function () {
-      mouseDown = false;
-      requestAnimationFrame(draw);
-    });
-
-    for (let x = 0; x < canvas.width; x += gridSize) {
-      for (let y = 0; y < canvas.height; y += gridSize) {
-        ctx.rect(x, y, gridSize, gridSize);
-        ctx.stroke();
-      }
-    }
-
-    function draw() {
-      indicatorCtx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let x = 0; x < canvas.width; x += gridSize) {
-        for (let y = 0; y < canvas.height; y += gridSize) {
-          if (
-            mouseIn &&
-            cursorPos.x > x &&
-            cursorPos.x < x + gridSize &&
-            cursorPos.y > y &&
-            cursorPos.y < y + gridSize
-          ) {
-            indicatorCtx.fillStyle = mouseDown ? "yellow" : "blue";
-            indicatorCtx.fillRect(x, y, gridSize, gridSize);
-          }
-        }
-      }
-
-      if (mouseIn) {
-        indicatorCtx.beginPath();
-        indicatorCtx.moveTo(cursorPos.x, 0);
-        indicatorCtx.lineTo(cursorPos.x, canvas.height);
-        indicatorCtx.stroke();
-
-        indicatorCtx.beginPath();
-        indicatorCtx.moveTo(0, cursorPos.y);
-        indicatorCtx.lineTo(canvas.width, cursorPos.y);
-        indicatorCtx.stroke();
-
-        indicatorCtx.beginPath();
-        indicatorCtx.arc(cursorPos.x, cursorPos.y, 40, 0, 2 * Math.PI);
-        indicatorCtx.stroke();
-      }
-    }
-
-    draw();
-  </script>
+  <script src="app.js"></script>
 </html>
